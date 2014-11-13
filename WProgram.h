@@ -20,7 +20,6 @@
 
 #ifdef __cplusplus
 
-#include "avr_emulation.h"
 #include "usb_serial.h"
 #include "usb_seremu.h"
 #include "usb_keyboard.h"
@@ -33,7 +32,6 @@
 //#include "WCharacter.h"
 #include "WString.h"
 #include "elapsedMillis.h"
-#include "IntervalTimer.h"
 
 uint16_t makeWord(uint16_t w);
 uint16_t makeWord(byte h, byte l);
@@ -41,9 +39,6 @@ uint16_t makeWord(byte h, byte l);
 #define word(...) makeWord(__VA_ARGS__)
 
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);
-
-void tone(uint8_t pin, uint16_t frequency, uint32_t duration = 0);
-void noTone(uint8_t pin);
 
 // WMath prototypes
 uint32_t random(void);
