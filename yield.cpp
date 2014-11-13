@@ -29,8 +29,6 @@
  */
 
 #include "core_pins.h"
-#include "usb_serial.h"
-#include "usb_seremu.h"
 
 void yield(void) __attribute__ ((weak));
 void yield(void)
