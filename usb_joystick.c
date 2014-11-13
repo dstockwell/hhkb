@@ -31,7 +31,6 @@
 #include "usb_dev.h"
 #include "usb_joystick.h"
 #include "core_pins.h" // for yield()
-#include "HardwareSerial.h"
 #include <string.h> // for memcpy()
 
 #ifdef JOYSTICK_INTERFACE // defined by usb_dev.h -> usb_desc.h
