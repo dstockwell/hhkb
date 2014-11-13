@@ -19,8 +19,6 @@
 
 #ifdef __cplusplus
 
-#include "usb_keyboard.h"
-
 //#include "WCharacter.h"
 #include "WString.h"
 #include "elapsedMillis.h"
