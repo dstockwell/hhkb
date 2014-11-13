@@ -6,7 +6,7 @@ TARGET = main
 ARDUINOPATH ?= ../../../..
 
 # configurable options
-OPTIONS = -DF_CPU=48000000 -DUSB_SERIAL -DLAYOUT_US_ENGLISH
+OPTIONS = -DF_CPU=48000000 -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
 
 # options needed by many Arduino libraries to configure for Teensy 3.0
 OPTIONS += -D__MK20DX256__ -DARDUIO=105 -DTEENSYDUINO=118
