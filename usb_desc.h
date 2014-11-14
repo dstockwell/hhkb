@@ -128,7 +128,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define SEREMU_RX_INTERVAL    2
   #define KEYBOARD_INTERFACE    0	// Keyboard
   #define KEYBOARD_ENDPOINT     3
-  #define KEYBOARD_SIZE         8
+  #define KEYBOARD_SIZE         32
   #define KEYBOARD_INTERVAL     1
   #define MOUSE_INTERFACE       1	// Mouse
   #define MOUSE_ENDPOINT        5

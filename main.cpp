@@ -1,7 +1,7 @@
 #include "WProgram.h"
 #include "usb_dev.h"
 
-uint8_t keys[6] = {0,0,0,0,0,0};
+uint8_t keys[KEYBOARD_SIZE] = {0};
 void send();
 
 extern "C" int main(void)
@@ -9,8 +9,8 @@ extern "C" int main(void)
   pinMode(13, OUTPUT);
   int i = 0;
   while (1) {
-    if (i == 5) { keys[0] = 16388; send(); }
-    if (i == 6) { keys[0] = 0; send(); }
+    if (i == 3) { keys[1] = 16; send(); }
+    if (i == 4) { keys[1] = 0; send(); }
     i++;
     digitalWriteFast(13, HIGH);
     delay(500);
@@ -30,10 +30,7 @@ void send() {
     if (tx_packet) break;
     yield();
   }
-  uint8_t empty = 0;
-  *(tx_packet->buf) = empty; // modifiers
-  *(tx_packet->buf + 1) = empty; // media;
-  memcpy(tx_packet->buf + 2, keys, 6);
-  tx_packet->len = 8;
+  memcpy(tx_packet->buf, keys, KEYBOARD_SIZE);
+  tx_packet->len = KEYBOARD_SIZE;
   usb_tx(KEYBOARD_ENDPOINT, tx_packet);
 }
