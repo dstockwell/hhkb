@@ -26,6 +26,7 @@ public:
   
         delayMicroseconds(5);
         disable();
+        // FIXME: This should delay the next scan, not the return.
         delayMicroseconds(75);
       }
     }
