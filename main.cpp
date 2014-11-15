@@ -55,6 +55,24 @@ void reboot() {
   __asm__ volatile("bkpt");
 }
 
+uint8_t rawhid[RAWHID_TX_SIZE] = {0};
+
+void sendRaw() {
+  usb_packet_t *tx_packet;
+
+  while (1) {
+    if (!usb_configuration) {
+      return;
+    }
+    tx_packet = usb_malloc();
+    if (tx_packet) break;
+    yield();
+  }
+  memcpy(tx_packet->buf, rawhid, RAWHID_TX_SIZE);
+  tx_packet->len = RAWHID_TX_SIZE;
+  usb_tx(RAWHID_TX_ENDPOINT, tx_packet);
+}
+
 extern "C" int main(void)
 {
   pinMode(13, OUTPUT);
@@ -63,6 +81,7 @@ extern "C" int main(void)
   keyboard.init();
 
   while (1) {
+    uint32_t now = micros();
     if (keyboard.scan()) {
       uint64_t matrix = keyboard.matrix();
       for (uint8_t row = 0; row < 8; row++) {
@@ -74,6 +93,9 @@ extern "C" int main(void)
         reboot();
       }
       send();
+      memcpy(rawhid, &matrix, 8);
+      memcpy(rawhid + 8, &now, 4);
+      sendRaw();
     }
   }
 }
