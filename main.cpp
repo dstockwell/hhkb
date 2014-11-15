@@ -60,26 +60,42 @@ extern "C" int main(void)
 {
   pinMode(13, OUTPUT);
 
-  rawhid raw;
-  hhkb keyboard;
-  keyboard.init();
+  RawHid raw;
+  Hhkb hhkb;
+
+  hhkb.init();
+  bool remote = false;
 
   while (1) {
-    uint32_t now = micros();
-    if (keyboard.scan()) {
-      uint64_t matrix = keyboard.matrix();
-      for (uint8_t row = 0; row < 8; row++) {
-        for (uint8_t col = 0; col < 8; col++) {
-          putBit(keys, keymap[row][col], getBit(matrix, row * 8 + col));
-        }
+    if (raw.available()) {
+      raw.receive();
+      if (raw.rx[0] == 1) {
+        remote = true;
+      } else if (raw.rx[0] == 0) {
+        remote = false;
+      } else if (raw.rx[0] == 2) {
+        memcpy(keys, raw.rx + 1, 16);
+        send();
       }
+    }
+    uint32_t now = micros();
+    if (hhkb.scan()) {
+      uint64_t matrix = hhkb.matrix();
       if (getBit(matrix, 1) && getBit(matrix, 4) && getBit(matrix, 5)) {
         reboot();
       }
-      send();
-      memcpy(raw.tx, &matrix, 8);
-      memcpy(raw.tx + 8, &now, 4);
-      raw.send();
+      if (remote) {
+        memcpy(raw.tx, &matrix, 8);
+        memcpy(raw.tx + 8, &now, 4);
+        raw.send();
+      } else {
+        for (uint8_t row = 0; row < 8; row++) {
+          for (uint8_t col = 0; col < 8; col++) {
+            putBit(keys, keymap[row][col], getBit(matrix, row * 8 + col));
+          }
+        }
+        send();
+      }
     }
   }
 }

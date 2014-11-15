@@ -1,13 +1,7 @@
 // See: https://github.com/tmk/tmk_keyboard/blob/master/keyboard/hhkb/doc/HHKB.txt
 
-class hhkb {
+class Hhkb {
 public:
-  hhkb() 
-    : m_matrix(0)
-    , m_prevMatrix(0)
-  {
-  }
-
   uint64_t matrix() const { return m_matrix; }
   uint64_t prevMatrix() const { return m_prevMatrix; }
   bool scan() {

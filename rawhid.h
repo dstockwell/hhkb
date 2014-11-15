@@ -1,6 +1,6 @@
 #include "usb_dev.h"
 
-class rawhid {
+class RawHid {
 public:
   uint8_t tx[RAWHID_TX_SIZE] = {0};
   uint8_t rx[RAWHID_RX_SIZE] = {0};

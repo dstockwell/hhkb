@@ -97,7 +97,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 
 #define KEYBOARD_INTERFACE    1	// Keyboard
 #define KEYBOARD_ENDPOINT     1
-#define KEYBOARD_SIZE         8
+#define KEYBOARD_SIZE         16
 #define KEYBOARD_INTERVAL     1
 
 #define RAWHID_INTERFACE      2
