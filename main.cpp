@@ -1,6 +1,7 @@
 #include "WProgram.h"
 #include "usb_dev.h"
 #include "hhkb.h"
+#include "rawhid.h"
 
 uint8_t keys[KEYBOARD_SIZE] = {0};
 void send();
@@ -55,28 +56,11 @@ void reboot() {
   __asm__ volatile("bkpt");
 }
 
-uint8_t rawhid[RAWHID_TX_SIZE] = {0};
-
-void sendRaw() {
-  usb_packet_t *tx_packet;
-
-  while (1) {
-    if (!usb_configuration) {
-      return;
-    }
-    tx_packet = usb_malloc();
-    if (tx_packet) break;
-    yield();
-  }
-  memcpy(tx_packet->buf, rawhid, RAWHID_TX_SIZE);
-  tx_packet->len = RAWHID_TX_SIZE;
-  usb_tx(RAWHID_TX_ENDPOINT, tx_packet);
-}
-
 extern "C" int main(void)
 {
   pinMode(13, OUTPUT);
 
+  rawhid raw;
   hhkb keyboard;
   keyboard.init();
 
@@ -93,9 +77,9 @@ extern "C" int main(void)
         reboot();
       }
       send();
-      memcpy(rawhid, &matrix, 8);
-      memcpy(rawhid + 8, &now, 4);
-      sendRaw();
+      memcpy(raw.tx, &matrix, 8);
+      memcpy(raw.tx + 8, &now, 4);
+      raw.send();
     }
   }
 }
