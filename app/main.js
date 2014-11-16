@@ -92,9 +92,6 @@ Layout.prototype = {
   map: function(from, to) {
     var index = hhkbLayout.indexes[from];
 
-    // Remove duplicate mapping.
-    this.remove(to);
-
     // Remove existing mapping.
     this.remove(this.matrix[index]);
 
@@ -136,14 +133,14 @@ function setBit(vector, offset, value) {
 function onreport(report, data) {
   var matrix = new Uint8Array(data.slice(0, 8));
   var pressedKeys = [];
+  for (var i = 0; i < keys.length; i++) {
+    keys[i] = 0;
+  }
   for (var i = 0; i < 64; i++) {
     var pressed = getBit(matrix, i);
     var mapped = layout.keymap[i];
-    if (mapped >= 0) {
+    if (mapped >= 0 && pressed) {
       setBit(keys, mapped, pressed);
-    }
-    if (pressed) {
-      pressedKeys.push(hhkbLayout.matrix[i]);
     }
   }
   chrome.hid.send(connectionId, 0, keyMessage.buffer, function() {});
