@@ -112,7 +112,56 @@ Layout.prototype = {
   },
 };
 
-var layout = new Layout();
+var layouts = {
+  normal: new Layout(),
+  move: new Layout()
+     .clear()
+     .map('h', 'LeftArrow')
+     .map('j', 'DownArrow')
+     .map('k', 'UpArrow')
+     .map('l', 'RightArrow')
+     .map('y', 'Home')
+     .map('u', 'PageDown')
+     .map('i', 'PageUp')
+     .map('o', 'End'),
+  none: new Layout().clear(),
+  number: new Layout()
+     .clear()
+     .map('a', '1')
+     .map('s', '2')
+     .map('d', '3')
+     .map('f', '4')
+     .map('g', '5')
+     .map('h', '6')
+     .map('j', '7')
+     .map('k', '8')
+     .map('l', '9')
+     .map(';', '0')
+     .map('.', '.'),
+};
+
+function press(key) {
+  var mapped = nkroIndexes[key];
+  return function(keys) { 
+    setBit(keys, mapped, 1);
+  };
+}
+
+var meta = {
+  a: function() { layout = layouts.normal; },
+  s: function() { layout = layouts.move; },
+  d: function() { layout = layouts.number; },
+  f: function() { layout = layouts.none; },
+  "'": press('Return'),
+  ';': press('Backspace'),
+  h: press('LeftArrow'),
+  j: press('DownArrow'),
+  k: press('UpArrow'),
+  l: press('RightArrow'),
+  r: function() { chrome.runtime.reload(); },
+};
+
+var layout = layouts.normal;
 
 function getBit(vector, offset) {
   var byte = offset / 8|0;
@@ -136,11 +185,19 @@ function onreport(report, data) {
   for (var i = 0; i < keys.length; i++) {
     keys[i] = 0;
   }
-  for (var i = 0; i < 64; i++) {
-    var pressed = getBit(matrix, i);
-    var mapped = layout.keymap[i];
-    if (mapped >= 0 && pressed) {
-      setBit(keys, mapped, pressed);
+  if (getBit(matrix, hhkbLayout.indexes['LMeta'])) {
+    for (var k in meta) {
+      if (getBit(matrix, hhkbLayout.indexes[k])) {
+        meta[k](keys);
+      }
+    }
+  } else {
+    for (var i = 0; i < 64; i++) {
+      var pressed = getBit(matrix, i);
+      var mapped = layout.keymap[i];
+      if (mapped >= 0 && pressed) {
+        setBit(keys, mapped, pressed);
+      }
     }
   }
   chrome.hid.send(connectionId, 0, keyMessage.buffer, function() {});
