@@ -4,7 +4,8 @@ document.body.style.whiteSpace = 'pre';
 var log = [];
 var connectionId;
 
-function onconnect() {
+function onconnect(newConnectionId) {
+  connectionId = newConnectionId;
   function receive() {
     chrome.hid.receive(connectionId, function(report, data) {
       receive();
@@ -159,10 +160,33 @@ function onreport(report, data) {
   document.body.textContent = log.join('\n');
 }
 
-chrome.hid.getDevices({}, function(devices) {
-  var device = devices[0];
-  chrome.hid.connect(device.deviceId, function(connection) {
-    connectionId = connection.connectionId;
-    onconnect();
-  });
-});
+(function() {
+  var device, connection;
+  setInterval(function() {
+    chrome.hid.getDevices({}, function(devices) {
+      if (!devices.length) {
+        // Device not available.
+        device = null;
+        connection = null;
+        return;
+      }
+      if (device && devices[0].deviceId != device.deviceId) {
+        // Device id changed, need a new connection.
+        connection = null;
+        device = null;
+      }
+      if (connection) {
+        // Still connected.
+        return;
+      }
+      device = devices[0];
+      connection = 'pending';
+      chrome.hid.connect(device.deviceId, function(newConnection) {
+        connection = newConnection;
+        if (connection) {
+          onconnect(connection.connectionId);
+        }
+      });
+    });
+  }, 1000);
+})();
