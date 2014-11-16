@@ -59,7 +59,8 @@ nkroKeys.forEach(function(k, i) {
 });
 
 var keymap = hhkbKeys.map(function(k) {
-  return nkroIndexes[k]|0;
+  var index = nkroIndexes[k];
+  return index != null ? index : -1;
 });
 
 function getBit(vector, offset) {
@@ -83,7 +84,10 @@ function onreport(report, data) {
   var pressedKeys = [];
   for (var i = 0; i < 64; i++) {
     var pressed = getBit(matrix, i);
-    setBit(keys, keymap[i], pressed);
+    var mapped = keymap[i];
+    if (mapped >= 0) {
+      setBit(keys, mapped, pressed);
+    }
     if (pressed) {
       pressedKeys.push(hhkbKeys[i]);
     }
