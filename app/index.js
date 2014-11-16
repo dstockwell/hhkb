@@ -22,25 +22,9 @@ var keyMessage = new Uint8Array(64);
 keyMessage[0] = 2;
 var keys = keyMessage.subarray(1, 17);
 
-var hhkbKeys = [
-  '2', 'q', 'w', 's', 'a', 'z', 'x', 'c',
-  '3', '4', 'r', 'e', 'd', 'f', 'v', 'b',
-  '5', '6', 'y', 't', 'g', 'h', 'n', null,
-  '1', 'Esc', 'Tab', 'LControl', 'LShift', 'LAlt', 'LMeta', 'Space',
-  '7', '8', 'u', 'i', 'k', 'j', 'm', null,
-  '\\', '`', 'Backspace', 'Return', 'Fn', 'RShift', 'RAlt', 'RMeta',
-  '9', '0', 'o', 'p', ';', 'l', ',', null,
-  '-', '+', ']', '[', "'", '/', '.', null,
-];
-
-var hhkbIndexes = {};
-hhkbKeys.forEach(function(k, i) {
-  if (k != null) hhkbIndexes[k] = i;
-});
-
 var nkroKeys = [
   'LControl', 'LShift', 'LAlt', 'LMeta', 'RControl', 'RShift', 'RAlt', 'RMeta',
-  null, null, null, null,'a', 'b', 'c', 'd',
+  null, null, null, null, 'a', 'b', 'c', 'd',
   'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
   'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
   'u', 'v', 'w', 'x', 'y', 'z', '1', '2',
@@ -58,10 +42,81 @@ nkroKeys.forEach(function(k, i) {
   if (k != null) nkroIndexes[k] = i;
 });
 
-var keymap = hhkbKeys.map(function(k) {
-  var index = nkroIndexes[k];
-  return index != null ? index : -1;
-});
+var hhkbLayout = (function() {
+  var hhkbMatrix = [
+    '2', 'q', 'w', 's', 'a', 'z', 'x', 'c',
+    '3', '4', 'r', 'e', 'd', 'f', 'v', 'b',
+    '5', '6', 'y', 't', 'g', 'h', 'n', null,
+    '1', 'Esc', 'Tab', 'LControl', 'LShift', 'LAlt', 'LMeta', 'Space',
+    '7', '8', 'u', 'i', 'k', 'j', 'm', null,
+    '\\', '`', 'Backspace', 'Return', 'Fn', 'RShift', 'RAlt', 'RMeta',
+    '9', '0', 'o', 'p', ';', 'l', ',', null,
+    '-', '+', ']', '[', "'", '/', '.', null,
+  ];
+  
+  var hhkbIndexes = {};
+  hhkbMatrix.forEach(function(k, i) {
+    if (k != null) hhkbIndexes[k] = i;
+  });
+
+  return new Layout(hhkbMatrix, hhkbIndexes);
+})();
+
+function Layout(matrix, indexes) {
+  this.matrix = matrix || Array(64);
+  this.indexes = indexes || {};
+  matrix && indexes || this.reset();
+}
+
+Layout.prototype = {
+  reset: function() {
+    this.matrix = hhkbLayout.matrix.concat();
+    this.indexes = JSON.parse(JSON.stringify(hhkbLayout.indexes));
+    this._keymap = null;
+    return this;
+  },
+  clear: function() {
+    this.matrix = this.matrix.map(function() { return null; });
+    this.indexes = {};
+    this._keymap = null;
+    return this;
+  },
+  remove: function(key) {
+    var index = this.indexes[key];
+    if (index != null) {
+      delete this.indexes[key];
+      this.matrix[index] = null;
+      this._keymap = null;
+    }
+    return this;
+  },
+  map: function(from, to) {
+    var index = hhkbLayout.indexes[from];
+
+    // Remove duplicate mapping.
+    this.remove(to);
+
+    // Remove existing mapping.
+    this.remove(this.matrix[index]);
+
+    // Establish new mapping.
+    this.matrix[index] = to;
+    this.indexes[to] = index;
+    this._keymap = null;
+    return this;
+  },
+  get keymap() {
+    if (!this._keymap) {
+      this._keymap = this.matrix.map(function(k) {
+        var index = nkroIndexes[k];
+        return index != null ? index : -1;
+      });
+    }
+    return this._keymap;
+  },
+};
+
+var layout = new Layout();
 
 function getBit(vector, offset) {
   var byte = offset / 8|0;
@@ -84,12 +139,12 @@ function onreport(report, data) {
   var pressedKeys = [];
   for (var i = 0; i < 64; i++) {
     var pressed = getBit(matrix, i);
-    var mapped = keymap[i];
+    var mapped = layout.keymap[i];
     if (mapped >= 0) {
       setBit(keys, mapped, pressed);
     }
     if (pressed) {
-      pressedKeys.push(hhkbKeys[i]);
+      pressedKeys.push(hhkbLayout.matrix[i]);
     }
   }
   setTimeout(function() {
