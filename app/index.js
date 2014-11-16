@@ -1,7 +1,5 @@
 'use strict';
 
-document.body.style.whiteSpace = 'pre';
-var log = [];
 var connectionId;
 
 function onconnect(newConnectionId) {
@@ -148,16 +146,9 @@ function onreport(report, data) {
       pressedKeys.push(hhkbLayout.matrix[i]);
     }
   }
-  setTimeout(function() {
   chrome.hid.send(connectionId, 0, keyMessage.buffer, function() {});
-}, 20);
 
   var time = new Uint32Array(data.slice(8, 12));
-  var s = (time[0] / 1000) + ' ' + pressedKeys.join('+');
-
-  log.unshift(s);
-  while (log.length > 20) log.pop();
-  document.body.textContent = log.join('\n');
 }
 
 (function() {
