@@ -1,21 +1,25 @@
 'use strict';
 
-var connectionId;
+let device;
 
-function onconnect(newConnectionId) {
-  connectionId = newConnectionId;
-  function receive() {
-    chrome.hid.receive(connectionId, function(report, data) {
-      receive();
-      onreport(report, data);
-    });
-  }
-  receive();
+let start = (async () => {
+  device = await navigator.usb.requestDevice({filters: []});
+  await device.open();
+  await device.selectConfiguration(1);
+  await device.claimInterface(2);
 
   var array = new Uint8Array(64);
   array[0] = 1;
-  chrome.hid.send(connectionId, 0, array.buffer, function() {});
-}
+  device.transferOut(3, array.buffer);
+
+  (async () => {
+    while (device.opened) {
+      let result = await device.transferIn(2, 64);
+      update(result.data.buffer);
+    }
+  })();
+});
+
 
 var keyMessage = new Uint8Array(64);
 keyMessage[0] = 2;
@@ -179,7 +183,8 @@ function setBit(vector, offset, value) {
   }
 }
 
-function onreport(report, data) {
+function update(buffer) {
+  var data = new Uint8Array(buffer);
   var matrix = new Uint8Array(data.slice(0, 8));
   var pressedKeys = [];
   for (var i = 0; i < keys.length; i++) {
@@ -200,38 +205,7 @@ function onreport(report, data) {
       }
     }
   }
-  chrome.hid.send(connectionId, 0, keyMessage.buffer, function() {});
+  device.transferOut(3, keyMessage.buffer);
 
   var time = new Uint32Array(data.slice(8, 12));
 }
-
-(function() {
-  var device, connection;
-  setInterval(function() {
-    chrome.hid.getDevices({}, function(devices) {
-      if (!devices.length) {
-        // Device not available.
-        device = null;
-        connection = null;
-        return;
-      }
-      if (device && devices[0].deviceId != device.deviceId) {
-        // Device id changed, need a new connection.
-        connection = null;
-        device = null;
-      }
-      if (connection) {
-        // Still connected.
-        return;
-      }
-      device = devices[0];
-      connection = 'pending';
-      chrome.hid.connect(device.deviceId, function(newConnection) {
-        connection = newConnection;
-        if (connection) {
-          onconnect(connection.connectionId);
-        }
-      });
-    });
-  }, 1000);
-})();

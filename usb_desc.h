@@ -86,10 +86,10 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 // #define DEVICE_CLASS		0xEF
 // #define DEVICE_SUBCLASS	0x02
 // #define DEVICE_PROTOCOL	0x01
-#define MANUFACTURER_NAME	{'T','e','e','n','s','y','d','u','i','n','o'}
-#define MANUFACTURER_NAME_LEN	11
-#define PRODUCT_NAME		{'S','e','r','i','a','l','/','K','e','y','b','o','a','r','d','/','M','o','u','s','e','/','J','o','y','s','t','i','c','k'}
-#define PRODUCT_NAME_LEN	30
+#define MANUFACTURER_NAME	{'h','h','k','b'}
+#define MANUFACTURER_NAME_LEN   4	
+#define PRODUCT_NAME		{'p','r','o','f','e','s','s','i','o','n','a','l',' ','2'}
+#define PRODUCT_NAME_LEN	14
 #define EP0_SIZE		64
 #define NUM_ENDPOINTS		3
 #define NUM_USB_BUFFERS	30

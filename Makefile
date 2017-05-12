@@ -56,10 +56,10 @@ LIBS = -lm
 
 
 # names for the compiler programs
-CC = $(abspath $(COMPILERPATH))/arm-none-eabi-gcc
-CXX = $(abspath $(COMPILERPATH))/arm-none-eabi-g++
-OBJCOPY = $(abspath $(COMPILERPATH))/arm-none-eabi-objcopy
-SIZE = $(abspath $(COMPILERPATH))/arm-none-eabi-size
+CC = arm-none-eabi-gcc
+CXX = arm-none-eabi-g++
+OBJCOPY = arm-none-eabi-objcopy
+SIZE = arm-none-eabi-size
 
 # automatically create lists of the sources and objects
 # TODO: this does not handle Arduino libraries yet...
