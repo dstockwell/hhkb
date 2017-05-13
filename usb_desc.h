@@ -86,21 +86,21 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 // #define DEVICE_CLASS		0xEF
 // #define DEVICE_SUBCLASS	0x02
 // #define DEVICE_PROTOCOL	0x01
-#define MANUFACTURER_NAME	{'h','h','k','b'}
-#define MANUFACTURER_NAME_LEN   4	
-#define PRODUCT_NAME		{'p','r','o','f','e','s','s','i','o','n','a','l',' ','2'}
-#define PRODUCT_NAME_LEN	14
+#define MANUFACTURER_NAME	{'P','F','U'}
+#define MANUFACTURER_NAME_LEN   3	
+#define PRODUCT_NAME		{'H','H','K','B',' ','P','r','o','f','e','s','s','i','o','n','a','l',' ','2'}
+#define PRODUCT_NAME_LEN	19
 #define EP0_SIZE		64
 #define NUM_ENDPOINTS		3
 #define NUM_USB_BUFFERS	30
 #define NUM_INTERFACE		2
 
-#define KEYBOARD_INTERFACE    1	// Keyboard
+#define KEYBOARD_INTERFACE    0	// Keyboard
 #define KEYBOARD_ENDPOINT     1
 #define KEYBOARD_SIZE         16
 #define KEYBOARD_INTERVAL     1
 
-#define RAWHID_INTERFACE      2
+#define RAWHID_INTERFACE      1
 #define RAWHID_TX_ENDPOINT    2
 #define RAWHID_TX_SIZE        64
 #define RAWHID_TX_INTERVAL    1
@@ -111,9 +111,9 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 #define RAWHID_USAGE_PAGE     0xFFAB
 #define RAWHID_USAGE          0x0200
 
-#define KEYBOARD_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9)
-#define RAWHID_DESC_OFFSET	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9)
-#define CONFIG_DESC_SIZE	(9+8 + 9+5+5+4+5+7+9+7+7 + 9+9+7 + 9+9+7)
+#define KEYBOARD_DESC_OFFSET	9
+#define RAWHID_DESC_OFFSET	9+9+9+7
+#define CONFIG_DESC_SIZE	9+9+9+7+9+9+7+7
 #define ENDPOINT1_CONFIG	ENDPOINT_TRANSIMIT_ONLY
 #define ENDPOINT2_CONFIG	ENDPOINT_TRANSIMIT_ONLY
 #define ENDPOINT3_CONFIG	ENDPOINT_RECEIVE_ONLY

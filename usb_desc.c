@@ -310,17 +310,12 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
 	{0x0200, 0x0000, config_descriptor, sizeof(config_descriptor)},
         {0x2200, KEYBOARD_INTERFACE, keyboard_report_desc, sizeof(keyboard_report_desc)},
         {0x2100, KEYBOARD_INTERFACE, config_descriptor+KEYBOARD_DESC_OFFSET, 9},
-#ifdef RAWHID_INTERFACE
 	{0x2200, RAWHID_INTERFACE, rawhid_report_desc, sizeof(rawhid_report_desc)},
 	{0x2100, RAWHID_INTERFACE, config_descriptor+RAWHID_DESC_OFFSET, 9},
-#endif
         {0x0300, 0x0000, (const uint8_t *)&string0, 0},
         {0x0301, 0x0409, (const uint8_t *)&usb_string_manufacturer_name, 0},
         {0x0302, 0x0409, (const uint8_t *)&usb_string_product_name, 0},
         {0x0303, 0x0409, (const uint8_t *)&usb_string_serial_number, 0},
-        //{0x0301, 0x0409, (const uint8_t *)&string1, 0},
-        //{0x0302, 0x0409, (const uint8_t *)&string2, 0},
-        //{0x0303, 0x0409, (const uint8_t *)&string3, 0},
 	{0, 0, NULL, 0}
 };
 

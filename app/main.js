@@ -6,7 +6,7 @@ let start = (async () => {
   device = await navigator.usb.requestDevice({filters: []});
   await device.open();
   await device.selectConfiguration(1);
-  await device.claimInterface(2);
+  await device.claimInterface(1);
 
   var array = new Uint8Array(64);
   array[0] = 1;
